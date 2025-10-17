@@ -1,10 +1,11 @@
 import numpy
 class organism:
-    def __init__(self,name,birth_rate,death_rate,food=None):
+    def __init__(self, name, birth_rate, death_rate, population:list,reasources:list = []):
         self.name = name
         self.birth_rate = birth_rate
         self.death_rate = death_rate
-        self.food = food
+        self.population = population
+        self.reasources = reasources
 def overshoot_population_model(Total_Time=100, birth_rate=0.15,Resource_Inputs=0):
     
     # Variables
