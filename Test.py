@@ -1,11 +1,15 @@
-import numpy
+import numpy as np
 class organism:
-    def __init__(self, name, birth_rate, death_rate, population:list,reasources:list = []):
+    '''The organism class represents the entire population of an organism and contains its base birth rate, death rate, current population, reasources and name. 
+    Additonaly reasources expects a list of lists'''
+    def __init__(self,birth_rate, death_rate, population:np.ndarray,reasources:np.ndarray = np.array([0]),name:str=""):
         self.name = name
         self.birth_rate = birth_rate
         self.death_rate = death_rate
         self.population = population
         self.reasources = reasources
+
+    
 def overshoot_population_model(Total_Time=100, birth_rate=0.15,Resource_Inputs=0):
     
     # Variables
@@ -23,11 +27,11 @@ def overshoot_population_model(Total_Time=100, birth_rate=0.15,Resource_Inputs=0
     Initial_Resources = 5000
     
     # Set up time array: Use spacing based on elapsed_time and Total_Time
-    time = numpy.arange(0,Total_Time,step=1)
+    time = np.arange(0,Total_Time,step=1)
     
     # Set up arrays to track change over time
-    Population = numpy.zeros(len(time))
-    Resources = numpy.zeros(len(time))
+    Population = np.zeros(len(time))
+    Resources = np.zeros(len(time))
     
     # Set initial conditions
     Population[0] = Initial_Population
@@ -71,3 +75,9 @@ def overshoot_population_model(Total_Time=100, birth_rate=0.15,Resource_Inputs=0
             Resources[i] = 0
         
     return time,Population,Resources
+
+thing_a = organism(0.15,0,np.array([1000]),np.array([5000]))
+thing_b = organism(0.1,0,np.array([500]),thing_a.population)
+print(thing_a.population[0])
+thing_a.population[0] = 400
+print(thing_b.reasources[0])
