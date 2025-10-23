@@ -70,7 +70,7 @@ class species:
         
 
         # Apply the population change
-        self.population[0] += population_change
+        self.population[0] += round(population_change)
 
         # Population can't be less than zero!
         if self.population[0] < 0:
@@ -87,10 +87,10 @@ class species:
             else:
                 resource_ratio = 0 # If the else statment is false, then there must be 0 resources, and as there are 0 resources, there is no way to contribute to the ratio. Thus ratio is set to 0
             # Calculate the change in resources by multiplying the resources used by the fractional resource ratio
-            catch_val = self.resources[i][0][0]
-            self.resources[i][0][0] -= resources_used * resource_ratio
+            catch_val = self.resources[i][0]
+            self.resources[i][0] -= resources_used * resource_ratio
             # Caluclate the remainder of divison by 1 so that we know the numbers after the decimal point
-            remainder = self.resources[i][0][0] % 1.0
+            remainder = self.resources[i][0] % 1.0
             # Store this remainder and it's index to the all_remainders array
             all_remainders[i] = remainder,i
             # Add the remainder to the growing sum of remainders
@@ -102,103 +102,43 @@ class species:
         all_remainders = np.sort(all_remainders,order="remainders")[::-1]
         # Round up a number of individual resource amounts based on the closest interger to the remainder
         for i in range(0,remainders_sum,1):
-            self.resources[all_remainders[i][1]][0][0] = math.ceil(self.resources[all_remainders[i][1]][0])
-            if self.resources[all_remainders[i][1]][0][0] <= 0:
-                self.resources[all_remainders[i][1]][0][0] = 0
+            self.resources[all_remainders[i][1]][0] = math.ceil(self.resources[all_remainders[i][1]][0])
+            if self.resources[all_remainders[i][1]][0] <= 0:
+                self.resources[all_remainders[i][1]][0] = 0
         # Round down all remaing resource values
         for i in range(remainders_sum,len(self.resources),1):
-            self.resources[all_remainders[i][1]][0][0] = math.floor(self.resources[all_remainders[i][1]][0])
-            if self.resources[all_remainders[i][1]][0][0] <= 0:
-                self.resources[all_remainders[i][1]][0][0] = 0
+            self.resources[all_remainders[i][1]][0] = math.floor(self.resources[all_remainders[i][1]][0])
+            if self.resources[all_remainders[i][1]][0] <= 0:
+                self.resources[all_remainders[i][1]][0] = 0
         if self.name == "plants":
             return
-        return resources_used
-def overshoot_population_model(Total_Time=100, birth_rate=0.15,Resource_Inputs=0):
+        elif self.name == "decomposers":
+            self.resources[0][0] += deaths
+            return round(resources_used)
+        corpses = round(deaths)
+        return corpses
     
-    # Variables
-    #-----------
-    # Total_Time - number of years to run the model
-    # birth_rate - rate of new births per year
-    # death_rate - rate of deaths per year
-    # Resource_Inputs - extra resources added each year via e.g. technological processes
-    # consumption_rate - resources used by each person in each year
-    consumption_rate = 1.0
-    
-    # Initial_Population - number of people at the start of the experiment
-    # Initial_Resources - amount of resources at the start of the experiment (generic units)
-    Initial_Population = 100
-    Initial_Resources = 5000
-    
-    # Set up time array: Use spacing based on elapsed_time and Total_Time
-    time = np.arange(0,Total_Time,step=1)
-    
-    # Set up arrays to track change over time
-    Population = np.zeros(len(time))
-    Resources = np.zeros(len(time))
-    
-    # Set initial conditions
-    Population[0] = Initial_Population
-    Resources[0] = Initial_Resources
-    
-    # Loop over time steps
-    for i in range(1,len(time)):
-        
-        # Resources per person is the relationship between the two reservoirs
-        resources_per_person = Resources[i-1]/Population[i-1]
-        
-        # death_rate now depends on the resources per person available
-        if resources_per_person <= 9:
-            death_rate = -0.1 * resources_per_person + 1.0
-        else:
-            death_rate = 0.1
-        
-        # Calculate the number of births that happened over the last year
-        #   based on the population at the previous time [i-1]
-        Births = birth_rate * Population[i-1]
-        
-        # Calculate the number of deaths that happened over the last year
-        #   based on the population at the previous time [i-1]
-        Deaths = death_rate * Population[i-1]
-        
-        # Population at time t is population the year before, plus the births, minus the deaths
-        Population[i] = Population[i-1] + Births - Deaths
-        
-        # Population can't be less than zero!
-        if Population[i] < 0:
-            Population[i] = 0    
-
-        # How many resources were used up? 1 resource for each person
-        Resources_Used = consumption_rate * Population[i-1]
-        
-        # Resources at time i is resources the year before minus the consumption
-        Resources[i] = Resources[i-1] - Resources_Used + Resource_Inputs
-        
-        # Resources can't be less than zero!
-        if Resources[i] < 0:
-            Resources[i] = 0
-        
-    return time,Population,Resources
-
-inital_corpses = 1000
-inital_plant_food = 1000
+inital_corpses = np.array([1000000])
+inital_plant_food = np.array([1000000])
 # inital neutrtion values for the hard coded decomposers, and plants
-plant_reproduction_rate = 0.2
+plant_reproduction_rate = 0.5
 plant_death_rate = 0
-inital_plants = np.array([1000])
+inital_plants = np.array([100000])
 decomposers_reproduction_rate = 0.2
 decomposers_death_rate = 0
-initial_decomposers = np.array([1000])
-# other values for the harinital_plant_food =dcoded species
+initial_decomposers = np.array([10000])
 
-corpses = np.array([inital_corpses])
-plant_food = np.array([inital_plant_food])
-decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,inital_corpses,"decomposers")
-plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,inital_plant_food,"plants")
-
-thing_a = species(0.15,0,np.array([1000]),np.array([5000]))
-thing_b = species(0.1,0,np.array([500]),[[thing_a.population]])
-print(thing_a.population[0])
-thing_b.overshoot_population_model()
-print(thing_a.population[0])
-thing_a.population[0] -= 300
-print(thing_b.resources[0][0])
+decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers")
+plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,[inital_plant_food],"plants")
+thing_a = species(0.15,0,np.array([1000]),[plants.population])
+thing_b = species(0.15,0,np.array([1000]),[plants.population,thing_a.population])
+thing_c = species(0.1,0,np.array([500]),[thing_a.population,thing_b.population])
+ecosystem = np.array([thing_a,thing_b,thing_c])
+for i in range(0,99,1):
+    species.cycle_counter += 1 
+    plants.overshoot_population_model()
+    for x in range(0,len(ecosystem),1):
+        corpses = ecosystem[x].overshoot_population_model()
+        decomposers.resources[0][0] += corpses
+    plants.resources[0][0] += decomposers.overshoot_population_model()
+a = 5
