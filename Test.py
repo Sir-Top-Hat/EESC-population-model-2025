@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import json
 class species:
     '''The species class represents the entire population of an species and contains its base birth rate, death rate, current population, resources, name, consumption rate, and it's population history. 
     Additonaly resources expects a numpy array of numpy arrays, and population expects a simple numpy array.
