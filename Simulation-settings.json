@@ -1,11 +1,11 @@
 {
     "simulation duration" : 100,
     "decomposers settings":{
-        "reproduction rate" : 0.5,
+        "reproduction rate" : 0.2,
         "death rate" : 0,
         "inital population": 10000,
         "inital resources": 1000000,
-        "consumption rate": 0.2
+        "consumption rate": 1
     },
     "plants settings":{
         "reproduction rate" : 0.5,

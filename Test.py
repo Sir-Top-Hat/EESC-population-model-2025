@@ -1,6 +1,11 @@
 import numpy as np
 import math
 import json
+
+with open("Simulation-settings.json","r") as file:
+    data = json.load(file)
+    file.close()
+
 class species:
     '''The species class represents the entire population of an species and contains its base birth rate, death rate, current population, resources, name, consumption rate, and it's population history. 
     Additonaly resources expects a numpy array of numpy arrays, and population expects a simple numpy array.
@@ -118,24 +123,26 @@ class species:
             return round(resources_used)
         corpses = round(deaths)
         return corpses
-    
-inital_corpses = np.array([1000000])
-inital_plant_food = np.array([1000000])
-# inital neutrtion values for the hard coded decomposers, and plants
-plant_reproduction_rate = 0.5
-plant_death_rate = 0
-inital_plants = np.array([100000])
-decomposers_reproduction_rate = 0.2
-decomposers_death_rate = 0
-initial_decomposers = np.array([10000])
+# Begin importing settings data from the json file
+species.experiment_length = data.get("simulation duration")
+inital_corpses = np.array([data.get("decomposers settings").get("inital resources")])
+inital_plant_food = np.array([data.get("plants settings").get("inital resources")])
+plant_reproduction_rate = data.get("plants settings").get("reproduction rate")
+plant_death_rate = data.get("plants settings").get("death rate")
+inital_plants = np.array([data.get("plants settings").get("inital population")])
+decomposers_reproduction_rate = data.get("decomposers settings").get("reproduction rate")
+decomposers_death_rate = data.get("decomposers settings").get("death rate")
+initial_decomposers = np.array([data.get("decomposers settings").get("inital population")])
+plant_consumption_rate = data.get("plants settings").get("consumption rate")
+decomposers_consumption_rate = data.get("decomposers settings").get("consumption rate")
 
-decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers")
-plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,[inital_plant_food],"plants")
+decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers",decomposers_consumption_rate)
+plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,[inital_plant_food],"plants",plant_consumption_rate)
 thing_a = species(0.15,0,np.array([1000]),[plants.population])
 thing_b = species(0.15,0,np.array([1000]),[plants.population,thing_a.population])
 thing_c = species(0.1,0,np.array([500]),[thing_a.population,thing_b.population])
 ecosystem = np.array([thing_a,thing_b,thing_c])
-for i in range(0,99,1):
+for i in range(0,species.experiment_length-1,1):
     species.cycle_counter += 1 
     plants.overshoot_population_model()
     for x in range(0,len(ecosystem),1):
