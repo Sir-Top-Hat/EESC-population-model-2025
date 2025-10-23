@@ -1,10 +1,7 @@
 import numpy as np
 import math
 import json
-
-with open("Simulation-settings.json","r") as file:
-    data = json.load(file)
-    file.close()
+import csv
 
 class species:
     '''The species class represents the entire population of an species and contains its base birth rate, death rate, current population, resources, name, consumption rate, and it's population history. 
@@ -123,25 +120,51 @@ class species:
             return round(resources_used)
         corpses = round(deaths)
         return corpses
-# Begin importing settings data from the json file
-species.experiment_length = data.get("simulation duration")
-inital_corpses = np.array([data.get("decomposers settings").get("inital resources")])
-inital_plant_food = np.array([data.get("plants settings").get("inital resources")])
-plant_reproduction_rate = data.get("plants settings").get("reproduction rate")
-plant_death_rate = data.get("plants settings").get("death rate")
-inital_plants = np.array([data.get("plants settings").get("inital population")])
-decomposers_reproduction_rate = data.get("decomposers settings").get("reproduction rate")
-decomposers_death_rate = data.get("decomposers settings").get("death rate")
-initial_decomposers = np.array([data.get("decomposers settings").get("inital population")])
-plant_consumption_rate = data.get("plants settings").get("consumption rate")
-decomposers_consumption_rate = data.get("decomposers settings").get("consumption rate")
+# Begin importing settings settings from the json file
+with open("Simulation-settings.json","r") as json_file:
+    settings = json.load(json_file)
+    json_file.close()
+with open("Input-data.csv","r") as csv_file:
+    data = csv.reader(csv_file)
+    csv_file.close
+    n = 0
+    species_list = []
+    consumption_list = []
+    for row in data:
+        if n >= 1:
+            species_holder = species(float(row[1]),float(row[2]),np.array([int(row[3])]),name=row[0],consumption_rate=int(row[5]))
+            species_list.append(species_holder)   
+            consumption_list.append(row[4])
+        n += 1
+
+species_name_dictionary = {}
+for n in range(0,len(species_list),1):
+    species_name_dictionary[species_list[n].name] = species_list[n]
+
+
+species.experiment_length = settings.get("simulation duration")
+inital_corpses = np.array([settings.get("decomposers settings").get("inital resources")])
+inital_plant_food = np.array([settings.get("plants settings").get("inital resources")])
+plant_reproduction_rate = settings.get("plants settings").get("reproduction rate")
+plant_death_rate = settings.get("plants settings").get("death rate")
+inital_plants = np.array([settings.get("plants settings").get("inital population")])
+decomposers_reproduction_rate = settings.get("decomposers settings").get("reproduction rate")
+decomposers_death_rate = settings.get("decomposers settings").get("death rate")
+initial_decomposers = np.array([settings.get("decomposers settings").get("inital population")])
+plant_consumption_rate = settings.get("plants settings").get("consumption rate")
+decomposers_consumption_rate = settings.get("decomposers settings").get("consumption rate")
 
 decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers",decomposers_consumption_rate)
 plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,[inital_plant_food],"plants",plant_consumption_rate)
-thing_a = species(0.15,0,np.array([1000]),[plants.population])
-thing_b = species(0.15,0,np.array([1000]),[plants.population,thing_a.population])
-thing_c = species(0.1,0,np.array([500]),[thing_a.population,thing_b.population])
-ecosystem = np.array([thing_a,thing_b,thing_c])
+species_name_dictionary[decomposers.name] = decomposers
+species_name_dictionary[plants.name] = plants
+for n in range(0,len(species_list),1):
+    applying_reasources = consumption_list[n].split("&")
+    for i in range(0,len(applying_reasources),1):
+        applying_reasources[i] = (species_name_dictionary[applying_reasources[i]]).population
+    species_list[n].resources = applying_reasources
+
+ecosystem = np.array(species_list)
 for i in range(0,species.experiment_length-1,1):
     species.cycle_counter += 1 
     plants.overshoot_population_model()
@@ -149,4 +172,3 @@ for i in range(0,species.experiment_length-1,1):
         corpses = ecosystem[x].overshoot_population_model()
         decomposers.resources[0][0] += corpses
     plants.resources[0][0] += decomposers.overshoot_population_model()
-a = 5
