@@ -2,7 +2,7 @@ import numpy as np
 import math
 import json
 import csv
-
+import matplotlib.pyplot as pyplot
 class species:
     '''The species class represents the entire population of an species and contains its base birth rate, death rate, current population, resources, name, consumption rate, and it's population history. 
     Additonaly resources expects a numpy array of numpy arrays, and population expects a simple numpy array.
@@ -172,3 +172,6 @@ for i in range(0,species.experiment_length-1,1):
         corpses = ecosystem[x].overshoot_population_model()
         decomposers.resources[0][0] += corpses
     plants.resources[0][0] += decomposers.overshoot_population_model()
+timeline  = np.arange(0,species.experiment_length,1)
+pyplot.plot(timeline,ecosystem[0].population_history)
+pyplot.show()
