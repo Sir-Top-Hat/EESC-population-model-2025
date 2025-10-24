@@ -3,6 +3,7 @@
     "removal settings":{
         "do removal": false,
         "removal point" : 50,
+        "removal percent": 1.0,
         "removed species": "example"
     },
     "decomposers settings":{

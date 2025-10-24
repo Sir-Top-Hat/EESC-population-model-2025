@@ -159,6 +159,7 @@ decomposers_consumption_rate = settings.get("decomposers settings").get("consump
 do_removal_flag = settings.get("removal settings").get("do removal")
 do_removal_point = settings.get ("removal settings").get("removal point")
 removal_target = settings.get("removal settings").get("removed species")
+removal_percentage = settings.get("removal settings").get("removal percent")
 tracked_species = settings.get("reqeusted data").get("select species")
 
 decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers",decomposers_consumption_rate)
@@ -180,10 +181,13 @@ for i in range(0,species.experiment_length-1,1):
         decomposers.resources[0][0] += corpses
     plants.resources[0][0] += decomposers.overshoot_population_model()
     if do_removal_flag and do_removal_point == i:
-        species_name_dictionary[removal_target].population[0] = 0
+        species_name_dictionary[removal_target].population[0] -= removal_percentage * species_name_dictionary[removal_target].population[0] 
 timeline  = np.arange(0,species.experiment_length,1)
 ploted_species_array = np.zeros(len(tracked_species))
 for i in range(0,len(tracked_species),1):
     pyplot.plot((species_name_dictionary[tracked_species[i]].population_history),label = tracked_species[i])
+pyplot.xlabel("Time in years")
+pyplot.ylabel("Population")
 pyplot.legend(title = "species")
+pyplot.title(f'Population of various species in an ecosystem over {species.experiment_length} years')
 pyplot.show()
