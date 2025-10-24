@@ -1,5 +1,10 @@
 {
     "simulation duration" : 100,
+    "removal settings":{
+        "do removal": false,
+        "removal point" : 50,
+        "removed species": "example"
+    },
     "decomposers settings":{
         "reproduction rate" : 0.2,
         "death rate" : 0,
@@ -13,5 +18,9 @@
         "inital population": 10000,
         "inital resources": 1000000,
         "consumption rate": 0.2
+    },
+    "reqeusted data":{
+        "select species": ["creature 1","plants"],
+        "select data": "population"
     }
 }

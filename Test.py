@@ -19,6 +19,7 @@ class species:
         self.consumption_rate = consumption_rate
         self.population_history = np.zeros(self.experiment_length)
         self.population_history[0] = self.population[0]
+        self.population_change_history = np.zeros(self.experiment_length)
     def overshoot_population_model(self):
         '''This is a modified version of the standard overshoot population model that has been modified to not loop, and work within the context of the function class. 
         Thus this function can be called by species_object.overshoot_population_model() instead of overshoot_population_model(vars). 
@@ -82,6 +83,8 @@ class species:
         # Record the population
         self.population_history[self.cycle_counter] = self.population[0]
         
+        # Record the change history
+        self.population_change_history[self.cycle_counter] = population_change
         # Calculate what percentage a type of reasources make up the total current resources
         remainders_sum = 0
         for i in range(0,len(self.resources),1):
@@ -153,6 +156,10 @@ decomposers_death_rate = settings.get("decomposers settings").get("death rate")
 initial_decomposers = np.array([settings.get("decomposers settings").get("inital population")])
 plant_consumption_rate = settings.get("plants settings").get("consumption rate")
 decomposers_consumption_rate = settings.get("decomposers settings").get("consumption rate")
+do_removal_flag = settings.get("removal settings").get("do removal")
+do_removal_point = settings.get ("removal settings").get("removal point")
+removal_target = settings.get("removal settings").get("removed species")
+tracked_species = settings.get("reqeusted data").get("select species")
 
 decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,initial_decomposers,[inital_corpses],"decomposers",decomposers_consumption_rate)
 plants = species(plant_reproduction_rate,plant_death_rate,inital_plants,[inital_plant_food],"plants",plant_consumption_rate)
@@ -172,6 +179,11 @@ for i in range(0,species.experiment_length-1,1):
         corpses = ecosystem[x].overshoot_population_model()
         decomposers.resources[0][0] += corpses
     plants.resources[0][0] += decomposers.overshoot_population_model()
+    if do_removal_flag and do_removal_point == i:
+        species_name_dictionary[removal_target].population[0] = 0
 timeline  = np.arange(0,species.experiment_length,1)
-pyplot.plot(timeline,ecosystem[0].population_history)
+ploted_species_array = np.zeros(len(tracked_species))
+for i in range(0,len(tracked_species),1):
+    pyplot.plot((species_name_dictionary[tracked_species[i]].population_history),label = tracked_species[i])
+pyplot.legend(title = "species")
 pyplot.show()
