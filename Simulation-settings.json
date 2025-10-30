@@ -1,27 +1,29 @@
 {
-    "simulation duration" : 100,
+    "simulation duration" : 500,
     "removal settings":{
-        "do removal": false,
-        "removal point" : 50,
+        "do removal": true,
+        "removal point" : 20,
         "removal percent": 1.0,
-        "removed species": "example"
+        "removed species": "puff adders snake"
     },
     "decomposers settings":{
-        "reproduction rate" : 0.2,
+        "reproduction rate" : 0.4,
         "death rate" : 0,
         "inital population": 10000,
-        "inital resources": 1000000,
-        "consumption rate": 1
+        "inital resources": 10000000,
+        "consumption rate": 0.8,
+        "nutritional value": 1
     },
     "plants settings":{
-        "reproduction rate" : 0.5,
+        "reproduction rate" : 0.4,
         "death rate" : 0,
-        "inital population": 10000,
-        "inital resources": 1000000,
-        "consumption rate": 0.2
+        "inital population": 100000,
+        "inital resources": 100000000,
+        "consumption rate": 0.4,
+        "nutritional value": 1
     },
     "reqeusted data":{
-        "select species": ["creature 1","plants"],
+        "select species": ["striped mice","puff adders snake","brown snake eagle"],
         "select data": "population"
     }
 }

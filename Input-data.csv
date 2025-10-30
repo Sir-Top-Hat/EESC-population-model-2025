@@ -1,2 +1,4 @@
-﻿name,birth rate,death rate,population,resources,consumption rate
-"creature 1",0.15,0,100,"plants",1
+﻿name,birth rate,death rate,population,resources,consumption rate,nutritional value
+"striped mice",0.6329,0.0196,500,"plants",0.0192,1
+"puff adders snake",0.2877,0.0016,200,"striped mice",0.8865,6
+"brown snake eagle",0.0096,0.0019,150,"striped mice&puff adders snake",1.3298,9
