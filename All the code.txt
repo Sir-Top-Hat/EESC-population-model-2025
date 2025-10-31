@@ -248,7 +248,7 @@ species_name_dictionary = {}
 for n in range(0,len(species_list),1):
     species_name_dictionary[species_list[n].name] = species_list[n]
 
-# begin applying settings to hard coded vars
+# begin applying settings to hard coded vars, all of these settings are in the form of dictionaries 
 inital_corpses = np.array([settings.get("decomposers settings").get("inital resources")])
 inital_plant_food = np.array([settings.get("plants settings").get("inital resources")])
 plant_reproduction_rate = settings.get("plants settings").get("reproduction rate")
@@ -311,4 +311,43 @@ pyplot.title(f'Population of various species in an ecosystem over {species.exper
 
 # export plot
 pyplot.savefig(f'{100*removal_percentage} percent removed.png')
+
+
+
+
+JSON section
+{
+    "simulation duration" : 500,
+    "removal settings":{
+        "do removal": true,
+        "removal point" : 20,
+        "removal percent": 1.0,
+        "removed species": "puff adders snake"
+    },
+    "decomposers settings":{
+        "reproduction rate" : 0.4,
+        "death rate" : 0,
+        "inital population": 10000,
+        "inital resources": 10000000,
+        "consumption rate": 0.8,
+        "nutritional value": 1
+    },
+    "plants settings":{
+        "reproduction rate" : 0.4,
+        "death rate" : 0,
+        "inital population": 100000,
+        "inital resources": 100000000,
+        "consumption rate": 0.4,
+        "nutritional value": 1
+    },
+    "reqeusted data":{
+        "select species": ["striped mice","puff adders snake","brown snake eagle"],
+        "select data": "population"
+    }
+}
+CSV section
+name,birth rate,death rate,population,resources,consumption rate,nutritional value
+"striped mice",0.6329,0.0196,500,"plants",0.0192,1
+"puff adders snake",0.2877,0.0016,200,"striped mice",0.8865,6
+"brown snake eagle",0.0096,0.0019,150,"striped mice&puff adders snake",1.3298,9
 
