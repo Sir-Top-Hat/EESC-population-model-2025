@@ -243,11 +243,12 @@ with open("Input-data.csv","r") as csv_file:
             species_list.append(species_holder) 
         n += 1
 
+# create dictionary and store species objects and associated names
 species_name_dictionary = {}
 for n in range(0,len(species_list),1):
     species_name_dictionary[species_list[n].name] = species_list[n]
 
-
+# begin applying settings to hard coded vars
 inital_corpses = np.array([settings.get("decomposers settings").get("inital resources")])
 inital_plant_food = np.array([settings.get("plants settings").get("inital resources")])
 plant_reproduction_rate = settings.get("plants settings").get("reproduction rate")
@@ -265,14 +266,27 @@ do_removal_point = settings.get ("removal settings").get("removal point")
 removal_target = settings.get("removal settings").get("removed species")
 removal_percentage = settings.get("removal settings").get("removal percent")
 tracked_species = settings.get("reqeusted data").get("select species")
+# end settings aplication 
 
+# initiate the hardcoded decomposers and plants
 decomposers = species(decomposers_reproduction_rate,decomposers_death_rate,np.array([initial_decomposers],float),np.array([inital_corpses],float),"decomposers",decomposers_consumption_rate,decomposers_nutritional_value)
 plants = species(plant_reproduction_rate,plant_death_rate,np.array([inital_plants],float),np.array([inital_plant_food],float),"plants",plant_consumption_rate,plant_nutritional_value)
+
+# add decomposers and plants to the species dictionary
 species_name_dictionary[decomposers.name] = decomposers
 species_name_dictionary[plants.name] = plants
+
+# initilise ecosystem
 ecosystem = np.array(species_list)
+
+# add dictonary 
 species.species_population_dict = species_name_dictionary
+
+
+# delete unecessary values
 del inital_corpses, inital_plant_food, inital_plants, initial_decomposers, row, settings, data, decomposers_nutritional_value, plant_nutritional_value, species_holder
+
+# the loop for the ecosystem
 for i in range(0,species.experiment_length-1,1):
     species.cycle_counter += 1 
     plants.overshoot_population_model_plants_decomposers()
@@ -284,6 +298,8 @@ for i in range(0,species.experiment_length-1,1):
         species_name_dictionary[removal_target].population[0] -= removal_percentage * species_name_dictionary[removal_target].population[0] 
 timeline  = np.arange(0,species.experiment_length,1)
 ploted_species_array = np.zeros(len(tracked_species))
+
+# Begin plotting
 pyplot.figure(figsize=(10,6))
 for i in range(0,len(tracked_species),1):
     pyplot.plot((species_name_dictionary[tracked_species[i]].population_history),label = tracked_species[i])
@@ -292,5 +308,7 @@ pyplot.ylabel("Population")
 pyplot.yscale("log")
 pyplot.legend(title = "species")
 pyplot.title(f'Population of various species in an ecosystem over {species.experiment_length} weeks, with {100*removal_percentage}% snakes removed at {do_removal_point} weeks')
-pyplot.savefig(f'{100*removal_percentage} percent removed 2.png')
+
+# export plot
+pyplot.savefig(f'{100*removal_percentage} percent removed.png')
 
